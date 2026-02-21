@@ -2,7 +2,7 @@
 {% block title %}Login - Private Chating Room{% endblock %}
 {% block extra_css %}
 <style>
-    /* Dark Theme Variables for Login */
+   
     :root {
         --bg-dark: #1e1e2f;
         --bg-light: #27293d;
@@ -12,24 +12,24 @@
         --box-shadow: 0 4px 15px rgba(0,0,0,0.5);
     }
     body { 
-        /* FIX: Ensures the box is centered both horizontally and vertically */
+       
         display: flex; 
-        justify-content: center; /* Center horizontally */
-        align-items: center;    /* Center vertically */
+        justify-content: center; 
+        align-items: center;   
         min-height: 100vh; 
         background-color: var(--bg-dark); 
         font-family: Arial, sans-serif;
-        padding: 20px; /* Padding around the body for safety */
+        padding: 20px; 
     }
     .login-box { 
         background: var(--bg-light); 
         padding: 40px 25px; 
         border-radius: 12px; 
         box-shadow: var(--box-shadow); 
-        width: 100%; /* FIX: Use 100% width up to max-width */
+        width: 100%;
         max-width: 400px; 
         text-align: center;
-        /* margin: auto; is covered by flexbox centering */
+       
     }
     .login-box h2 {
         color: var(--primary-color); 
