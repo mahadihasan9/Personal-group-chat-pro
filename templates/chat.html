@@ -116,7 +116,7 @@
     }
     #reaction-menu span { font-size: 24px; margin: 0 5px; cursor: pointer; }
     
-    /* FIX: টাইপিং ইন্ডিকেটর স্টাইল */
+    
     #typing-indicator { 
         font-size: 14px; color: #aaa; padding: 5px 0; display: none; align-self: flex-start; 
         height: 20px; 
@@ -130,7 +130,7 @@
     .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
     @keyframes dot-blink { 0%, 100% { opacity: 0.2; } 50% { opacity: 1; } }
 
-    /* FIX: সিস্টেম নোটিফিকেশন স্টাইল */
+    
     .system-notification {
         text-align: center;
         margin: 10px auto;
@@ -227,7 +227,7 @@
 <script src="{{ url_for('static', filename='js/socket.io.min.js') }}"></script> 
 
 <script>
-    // FIX: SocketIO পুনরুদ্ধার
+   
     const socket = io(); 
     const chatWindow = document.getElementById('chat-window');
     const messageInput = document.getElementById('message-input');
@@ -242,13 +242,13 @@
     window.currentMsgId = null; 
     const CURRENT_USER = "{{ username }}"; 
     
-    // FIX: Message tracking - Initial load এর জন্য দরকার
+    
     let messageCache = {}; 
     document.querySelectorAll('.message-box').forEach(msgBox => {
         messageCache[msgBox.dataset.id] = true;
     });
 
-    // --- Utility Functions ---
+  
     let isScrolledToBottom = true;
     function scrollToBottom() {
         if (isScrolledToBottom) {
@@ -341,7 +341,7 @@
     }
     document.querySelectorAll('.message-box').forEach(setupSwipeToReply);
     
-    // --- Core RENDER Functions ---
+  
     
     function renderSystemNotification(msg) {
         const notificationBox = document.createElement('div');
@@ -355,13 +355,13 @@
     function renderMessage(msg) {
         if (!msg || !msg.id || !msg.user) return;
         
-        // Handle system messages
+       
         if (msg.system_notification) {
              renderSystemNotification(msg);
              return;
         }
 
-        // Skip if message already rendered from initial load
+      
         if (messageCache[msg.id]) {
             renderReactions(msg.id, msg.reactions);
             return;
@@ -416,7 +416,7 @@
         scrollToBottom();
     }
 
-    // --- Message Send Handler (SocketIO) ---
+  
     function sendMessageHandler() {
         const message = messageInput.value.trim();
         const fileInput = document.getElementById('image-upload');
@@ -439,7 +439,7 @@
     });
 
 
-    // --- Image Upload Logic (SocketIO) ---
+  
     function handleImageUpload(event) {
         const file = event.target.files[0];
         if (!file) return;
@@ -462,38 +462,38 @@
     }
     window.handleImageUpload = handleImageUpload;
 
-    // --- Reaction Logic Functions (SocketIO) ---
+
     
-    // **FINAL FIX: অন্যের মেসেজে রিয়্যাকশন ট্রিগার করার জন্য লজিক সংশোধন**
+   
     function setupReactionListeners(msgBox, msgId) {
-        // ডাবল ক্লিক লিসেনার
+       
         msgBox.addEventListener('dblclick', function(e) {
-            // ডাবল ক্লিক শুধুমাত্র মেসেজ বাবল কন্টেন্টের উপর কাজ করবে
+        
             if (e.target.closest('.message-box-content')) {
                 e.preventDefault(); 
                 showReactionMenu(msgBox, msgId);
             }
         });
 
-        // লং প্রেস লিসেনার
+      
         let pressTimer;
         msgBox.addEventListener('touchstart', (e) => {
-            // নিশ্চিত করুন যে এটি মেসেজ কন্টেন্টের উপর টাচ হয়েছে এবং শুধুমাত্র একটি আঙুল ব্যবহার করা হচ্ছে
+           
             if (e.touches.length > 1 || !e.target.closest('.message-box-content')) return;
             
-            // যদি এটি রিপ্লাই সোয়াইপ মোডে থাকে, তাহলে লং প্রেস বন্ধ করুন।
+           
             if (msgBox.classList.contains('swiping')) return; 
 
             pressTimer = setTimeout(() => {
                 showReactionMenu(msgBox, msgId);
-            }, 700); // 700ms লং প্রেস
+            }, 700); 
         }, false);
 
         msgBox.addEventListener('touchend', () => {
             clearTimeout(pressTimer);
         });
         
-        // টাচ মুভ হলে বা স্ক্রল হলে লং প্রেস বাতিল
+       
         msgBox.addEventListener('touchmove', () => {
             clearTimeout(pressTimer);
         });
@@ -563,14 +563,14 @@
     }
     window.sendReaction = sendReaction; 
 
-    // --- CORE SOCKETIO HANDLERS ---
+   
     
-    // নতুন মেসেজ পেলে রেন্ডার
+   
     socket.on('new_message', function(msg) {
         renderMessage(msg);
     });
 
-    // রিয়াকশন আপডেট হলে রেন্ডার
+    
     socket.on('reaction_update', function(data) {
         const msgBox = document.querySelector(`.message-box[data-id="${data.msg_id}"]`);
         if (msgBox) {
@@ -578,7 +578,7 @@
         }
     });
 
-    // ইউজার জয়েনিং/লিভিং নোটিফিকেশন
+ 
     socket.on('user_joined', function(msg) {
         renderSystemNotification(msg);
     });
@@ -586,12 +586,12 @@
         renderSystemNotification(msg);
     });
     
-    // --- TYPING INDICATOR LOGIC (Client-side) ---
+   
     
     let typingUsers = {};
     let typingTimeout;
 
-    // Send typing status when key is pressed
+   
     messageInput.addEventListener('input', function() {
         if (!typingTimeout) {
             socket.emit('typing', { is_typing: true });
@@ -605,7 +605,7 @@
         }, 2000);
     });
 
-    // Receive typing status
+   
     socket.on('typing_status', function(data) {
         if (data.user !== CURRENT_USER) {
             if (data.is_typing) {
@@ -630,7 +630,7 @@
         updateChatWindowHeight(); 
     }
 
-    // --- Initial Setup ---
+  
     document.addEventListener('DOMContentLoaded', function() {
         // Initial setup for messages loaded via Flask
         document.querySelectorAll('.message-box').forEach(msgBox => {
